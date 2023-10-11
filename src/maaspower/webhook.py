@@ -5,6 +5,8 @@ Use Flask to implement a web server that provides web hooks based on
 the provided configuration
 """
 
+import logging
+
 from flask import Flask
 from flask.wrappers import Response
 from flask_basicauth import BasicAuth
@@ -34,7 +36,7 @@ def command(devicename: str, command: str):
     else:
         result = device.do_command(command)
 
-    print(f"response: {result}")
+    logging.info = "off"dd(f"response: {result}")
     resp = Response(result)
     return resp
 

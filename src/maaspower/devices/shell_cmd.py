@@ -8,6 +8,7 @@ that can be controlled via a command line utility.
 e.g. smart power switching usb hubs https://github.com/mvp/uhubctl
 """
 import subprocess
+import logging
 from dataclasses import dataclass
 
 from typing import Optional
@@ -30,13 +31,13 @@ class CommandLine(RegexSwitchDevice):
     type: Literal["CommandLine"] = "CommandLine"
 
     def execute_command(self, command: str):
-        print(f"EXECUTE command line: {command}")
+        logging.info(f"EXECUTE command line: {command}")
         params = command.split(" ")
         process = subprocess.Popen(
             params, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         stdout, stderr = process.communicate()
-        print(stdout.decode(), stderr.decode())
+        logging.info(stdout.decode(), stderr.decode())
 
         return stdout.decode()
 

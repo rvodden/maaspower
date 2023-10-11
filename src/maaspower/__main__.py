@@ -12,9 +12,10 @@ from . import __version__, maas_globals
 # import all subclasses of SwitchDevice so ApiSchema sees them
 from .devices.shell_cmd import CommandLine
 from .devices.smart_thing import SmartThing
-from .devices.web_ui import WebGui
 from .devices.web_device import WebDevice
+from .devices.web_ui import WebGui
 from .maasconfig import MaasConfig
+from .service import configure_service
 from .webhook import run_web_hook
 
 # avoid linter complaints
@@ -53,9 +54,7 @@ def schema(
 
 
 @cli.command()
-def run(
-    config: Path = typer.Argument(..., help="configuration for the webhook server")
-):
+def run(config=typer.Argument(..., help="configuration for the webhook server")):
     """Read the configuration file and stand up a web hook server"""
 
     config_dict = YAML().load(config)
@@ -65,6 +64,38 @@ def run(
     maas_globals.maas_config = MaasConfig.deserialize(config_dict)
 
     run_web_hook(maas_globals.maas_config)
+
+
+@cli.command()
+def service(
+    configuration_file_path: Optional[Path] = typer.Argument(
+        ..., default=None, help="the location of the configuration file"
+    ),
+    runtime_directory_path: Optional[Path] = typer.Argument(
+        ..., default=None, help="the working directory of the running service"
+    ),
+    username: Optional[str] = typer.Argument(
+        ..., default=None, help="the username under which the service should run"
+    ),
+    system_wide: Optional[bool] = typer.Argument(
+        ...,
+        default=None,
+        help="if set to true, will attempt to create a system wide service (must be run as root)",
+    ),
+    python_executable: Optional[Path] = typer.Argument(
+        ...,
+        default=None,
+        help="the python executable to use to run the maaspower service.",
+    ),
+):
+    """Configures a systemd service to run masspower"""
+    configure_service(
+        configuration_file_path,
+        runtime_directory_path,
+        username,
+        system_wide,
+        python_executable,
+    )
 
 
 # allow tests with:

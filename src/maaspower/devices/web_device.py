@@ -25,8 +25,8 @@ class WebDevice(SwitchDevice):
     type: Literal["WebDevice"] = "WebDevice"
 
     # this gets called after the dataclass __init__
-    def __post_init__(self):
-        self.webgui_name = self.name.split("-")[0]
+    def __post_init__(self) -> None:
+        self.webgui_name: str = self.name.split("-")[0]
         self.maas_config: Optional[MaasConfig] = None
         self.web_ui: Optional[WebGui] = None
 
